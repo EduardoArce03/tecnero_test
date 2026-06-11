@@ -1,0 +1,118 @@
+<p-toast />
+
+<div class="um-container">
+
+    <!-- Header -->
+    <div class="um-header">
+        <div class="um-header__info">
+            <h2 class="um-header__title">Unidades de medida</h2>
+            <span class="um-header__subtitle">Gestiona las unidades disponibles para los productos</span>
+        </div>
+        <p-button
+            label="Nueva unidad"
+            icon="pi pi-plus"
+            (onClick)="abrirDialogCrear()" />
+    </div>
+
+    <!-- Tabla -->
+    <p-table
+        [value]="unidadesMedida"
+        [loading]="loading()"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [responsiveLayout]="'scroll'"
+        styleClass="p-datatable-sm">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nombre</th>
+                <th>Abreviatura</th>
+                <th class="um-col-center">Estado</th>
+                <th class="um-col-center">Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-um>
+            <tr>
+                <td>{{ um.nombre }}</td>
+                <td>{{ um.abreviatura }}</td>
+                <td class="um-col-center">
+                    <p-tag
+                        [value]="um.activo ? 'Activo' : 'Inactivo'"
+                        [severity]="um.activo ? 'success' : 'danger'"
+                        [rounded]="true" />
+                </td>
+                <td class="um-col-center">
+                    <div class="um-acciones">
+                        <p-button
+                            icon="pi pi-pencil"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="info"
+                            pTooltip="Editar"
+                            tooltipPosition="top" />
+                        <p-button
+                            [icon]="um.activo ? 'pi pi-ban' : 'pi pi-check-circle'"
+                            [rounded]="true"
+                            [text]="true"
+                            [severity]="um.activo ? 'danger' : 'success'"
+                            [pTooltip]="um.activo ? 'Desactivar' : 'Activar'"
+                            tooltipPosition="top"
+                            (onClick)="toggleActivo(um)" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">
+                    <div class="um-empty">
+                        <i class="pi pi-tags"></i>
+                        <span>No hay unidades de medida registradas</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+
+</div>
+
+<!-- Dialog crear -->
+<p-dialog
+    header="Nueva unidad de medida"
+    [visible]="dialogVisible()"
+    (visibleChange)="dialogVisible.set($event)"
+    [modal]="true"
+    [style]="{ width: '400px' }"
+    [draggable]="false"
+    [resizable]="false">
+
+    <div class="um-dialog-body">
+        <label for="nombre" class="um-label">Nombre</label>
+        <input
+            pInputText
+            id="nombre"
+            [(ngModel)]="nombre"
+            placeholder="Ej. Kilogramo"
+            class="w-full"
+            (keyup.enter)="crearUnidadMedida()" />
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button
+            label="Cancelar"
+            severity="secondary"
+            [text]="true"
+            (onClick)="cerrarDialog()" />
+        <p-button
+            label="Guardar"
+            icon="pi pi-check"
+            [loading]="guardando()"
+            [disabled]="!nombre.trim()"
+            (onClick)="crearUnidadMedida()" />
+    </ng-template>
+
+</p-dialog>

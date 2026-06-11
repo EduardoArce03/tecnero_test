@@ -1,0 +1,71 @@
+.um-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+// ── Header ────────────────────────────────────────────────
+.um-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    &__title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--p-text-color);
+    }
+
+    &__subtitle {
+        display: block;
+        margin-top: 0.2rem;
+        font-size: 0.875rem;
+        color: var(--p-text-muted-color);
+    }
+}
+
+// ── Table helpers ─────────────────────────────────────────
+.um-col-center {
+    text-align: center !important;
+}
+
+.um-acciones {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+// ── Empty state ───────────────────────────────────────────
+.um-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 2.5rem 0;
+    color: var(--p-text-muted-color);
+
+    i {
+        font-size: 2rem;
+        opacity: 0.45;
+    }
+
+    span {
+        font-size: 0.9rem;
+    }
+}
+
+// ── Dialog ────────────────────────────────────────────────
+.um-dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.25rem 0 0.75rem;
+}
+
+.um-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--p-text-color);
+}

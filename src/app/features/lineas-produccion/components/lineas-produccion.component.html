@@ -1,0 +1,157 @@
+<p-toast />
+
+<div class="lp-container">
+
+    <!-- header -->
+    <div class="lp-header">
+        <div class="lp-header__info">
+            <h2>Líneas de Producción</h2>
+            <span>Gestión de líneas de producción de la planta</span>
+        </div>
+        <p-button
+            label="Nueva Línea"
+            icon="pi pi-plus"
+            (onClick)="abrirDialogCrear()" />
+    </div>
+
+    <!-- tabla -->
+    <p-table
+        [value]="lineasProduccion"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [globalFilterFields]="['nombre', 'descripcion']"
+        stripedRows
+        #dt>
+
+        <ng-template pTemplate="caption">
+            <div class="lp-caption">
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                        pInputText
+                        placeholder="Buscar línea..."
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="nombre">
+                    Nombre <p-sortIcon field="nombre" />
+                </th>
+                <th>Descripción</th>
+                <th class="lp-col-center">Estado</th>
+                <th class="lp-col-center">Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-linea>
+            <tr>
+                <td class="lp-nombre">{{ linea.nombre }}</td>
+                <td class="lp-descripcion">{{ linea.descripcion || '—' }}</td>
+                <td class="lp-col-center">
+                    <p-tag
+                        [value]="linea.activo ? 'Activo' : 'Inactivo'"
+                        [severity]="linea.activo ? 'success' : 'danger'"
+                        [rounded]="true" />
+                </td>
+                <td class="lp-col-center">
+                    <div class="lp-acciones">
+                        <p-button
+                            icon="pi pi-pencil"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="info"
+                            pTooltip="Editar"
+                            tooltipPosition="top"
+                            (onClick)="abrirDialogEditar(linea)" />
+                        <p-button
+                            [icon]="linea.activo ? 'pi pi-ban' : 'pi pi-check-circle'"
+                            [rounded]="true"
+                            [text]="true"
+                            [severity]="linea.activo ? 'danger' : 'success'"
+                            [pTooltip]="linea.activo ? 'Desactivar' : 'Activar'"
+                            tooltipPosition="top"
+                            (onClick)="toggleActivo(linea)" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">
+                    <div class="lp-empty">
+                        <i class="pi pi-sitemap"></i>
+                        <span>No hay líneas de producción registradas</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<!-- dialog -->
+<p-dialog
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [style]="{ width: '480px' }"
+    [breakpoints]="{ '768px': '90vw' }"
+    [draggable]="false">
+
+    <ng-template #header>
+        <div class="lp-dialog-header">
+            <i [class]="editando ? 'pi pi-pencil' : 'pi pi-plus-circle'"></i>
+            <span>{{ editando ? 'Editar Línea' : 'Nueva Línea de Producción' }}</span>
+        </div>
+    </ng-template>
+
+    <form [formGroup]="form" class="lp-form">
+
+        <div class="lp-field">
+            <label>Nombre <span class="lp-required">*</span></label>
+            <input
+                pInputText
+                formControlName="nombre"
+                placeholder="Ej: Fabricación Cilindros"
+                [class.ng-invalid]="form.get('nombre')?.invalid && form.get('nombre')?.touched"
+                [class.ng-dirty]="form.get('nombre')?.touched" />
+            <small *ngIf="form.get('nombre')?.invalid && form.get('nombre')?.touched">
+                El nombre es requerido
+            </small>
+        </div>
+
+        <div class="lp-field">
+            <label>Descripción</label>
+            <textarea
+                pTextarea
+                formControlName="descripcion"
+                placeholder="Descripción de la línea de producción"
+                [rows]="3"
+                [autoResize]="true">
+      </textarea>
+        </div>
+
+    </form>
+
+    <ng-template #footer>
+        <div class="lp-dialog-footer">
+            <p-button
+                label="Cancelar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="cerrarDialog()" />
+            <p-button
+                [label]="editando ? 'Guardar cambios' : 'Crear línea'"
+                [icon]="editando ? 'pi pi-check' : 'pi pi-plus'"
+                [loading]="guardando"
+                [disabled]="form.invalid"
+                (onClick)="guardar()" />
+        </div>
+    </ng-template>
+
+</p-dialog>

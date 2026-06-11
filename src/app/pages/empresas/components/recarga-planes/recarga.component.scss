@@ -1,0 +1,190 @@
+// ── Wrapper centrado ──────────────────────────────────────
+.recarga-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+// ── Card ──────────────────────────────────────────────────
+.ci-card {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+// ── Card header ───────────────────────────────────────────
+.ci-card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--surface-border);
+}
+
+.ci-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0 0 3px;
+}
+
+.ci-card-subtitle {
+    font-size: 0.78rem;
+    color: var(--text-color-secondary);
+    margin: 0;
+}
+
+// ── Steps container ───────────────────────────────────────
+.ci-steps {
+    padding: 0;
+}
+
+// ── Paso individual ───────────────────────────────────────
+.ci-step {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--surface-border);
+
+    &--last {
+        border-bottom: none;
+    }
+}
+
+.step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px 0 18px 22px;
+    flex-shrink: 0;
+}
+
+.step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.step-line {
+    flex: 1;
+    width: 1.5px;
+    background: var(--surface-border);
+    margin: 5px 0;
+    min-height: 12px;
+}
+
+.step-content {
+    flex: 1;
+    padding: 16px 22px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.step-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-color-secondary);
+}
+
+// ── Select override ───────────────────────────────────────
+:host ::ng-deep .ci-select {
+    .p-select {
+        border-radius: 7px;
+        font-size: 0.85rem;
+
+        &:not(.p-disabled):hover {
+            border-color: var(--primary-color);
+        }
+
+        &.p-focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+    }
+
+    .p-select-label {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+}
+
+// ── SelectButton override ─────────────────────────────────
+:host ::ng-deep .ci-select-button {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+
+    .p-togglebutton {
+        border-radius: 7px !important;
+        font-size: 0.8rem;
+        font-weight: 500;
+        padding: 8px 4px;
+        border: 1px solid var(--surface-border) !important;
+        background: transparent;
+        color: var(--text-color-secondary);
+        transition: all 0.15s;
+        text-align: center;
+
+        &:hover {
+            border-color: var(--primary-300, var(--primary-color)) !important;
+            color: var(--primary-color);
+        }
+
+        &.p-highlight {
+            border-color: var(--primary-color) !important;
+            background: var(--primary-50, color-mix(in srgb, var(--primary-color) 10%, transparent)) !important;
+            color: var(--primary-700, var(--primary-color)) !important;
+            font-weight: 600;
+        }
+    }
+
+    @media (max-width: 480px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+// ── Card footer ───────────────────────────────────────────
+.ci-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-top: 1px solid var(--surface-border);
+    background: var(--surface-ground);
+    gap: 12px;
+
+    @media (max-width: 480px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.footer-hint {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: var(--text-color-secondary);
+
+    .pi {
+        font-size: 0.75rem;
+    }
+}
+
+// ── Confirm button ────────────────────────────────────────
+:host ::ng-deep .ci-btn-confirm {
+    .p-button {
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 9px 20px;
+        white-space: nowrap;
+    }
+}

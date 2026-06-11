@@ -1,0 +1,176 @@
+// ── Wrapper ───────────────────────────────────────────────
+.crear-plan-wrap {
+    max-width: 580px;
+    margin: 0 auto;
+}
+
+// ── Card ──────────────────────────────────────────────────
+.ci-card {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+// ── Header ────────────────────────────────────────────────
+.ci-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--surface-border);
+}
+
+.header-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--primary-50, color-mix(in srgb, var(--primary-color) 10%, transparent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .pi {
+        font-size: 1rem;
+        color: var(--primary-color);
+    }
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ci-card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.ci-card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-color-secondary);
+    margin: 0;
+}
+
+// ── Body ──────────────────────────────────────────────────
+.ci-card-body {
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+// ── Row dos columnas ──────────────────────────────────────
+.fields-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// ── Campo genérico ────────────────────────────────────────
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+// ── Input text ────────────────────────────────────────────
+:host ::ng-deep .ci-input {
+    border-radius: 7px !important;
+    font-size: 0.85rem !important;
+    padding: 8px 12px !important;
+
+    &:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 1px var(--primary-color) !important;
+    }
+}
+
+// ── InputNumber ───────────────────────────────────────────
+:host ::ng-deep .ci-input-number {
+    .p-inputnumber-input {
+        border-radius: 7px !important;
+        font-size: 0.85rem !important;
+        padding: 8px 12px !important;
+        width: 100%;
+
+        &:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 1px var(--primary-color) !important;
+        }
+    }
+}
+
+// ── MultiSelect ───────────────────────────────────────────
+:host ::ng-deep .ci-multiselect {
+    .p-multiselect {
+        border-radius: 7px !important;
+        font-size: 0.85rem;
+
+        &:not(.p-disabled):hover {
+            border-color: var(--primary-color);
+        }
+
+        &.p-focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+    }
+
+    .p-multiselect-label {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+}
+
+// ── Tags de módulos seleccionados ─────────────────────────
+.modules-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 2px;
+}
+
+.module-tag {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--primary-50, color-mix(in srgb, var(--primary-color) 10%, transparent));
+    color: var(--primary-700, var(--primary-color));
+}
+
+// ── Footer ────────────────────────────────────────────────
+.ci-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 24px;
+    border-top: 1px solid var(--surface-border);
+    background: var(--surface-ground);
+}
+
+:host ::ng-deep {
+    .ci-btn-cancel .p-button,
+    .ci-btn-save .p-button {
+        border-radius: 7px !important;
+        font-size: 0.83rem !important;
+        font-weight: 600 !important;
+        padding: 8px 18px !important;
+    }
+}

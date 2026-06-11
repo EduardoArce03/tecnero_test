@@ -1,0 +1,198 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="ds-container">
+
+    <!-- header -->
+    <div class="ds-header">
+        <div class="ds-header__info">
+            <h2>Solicitudes para Despacho</h2>
+            <span>Solicitudes aprobadas pendientes de entrega</span>
+        </div>
+        <div class="ds-header__badge" *ngIf="solicitudes.length > 0">
+            <i class="pi pi-box"></i>
+            <span>{{ solicitudes.length }} para despachar</span>
+        </div>
+    </div>
+
+    <!-- tabla -->
+    <p-table
+        [value]="solicitudes"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [globalFilterFields]="['usuarioResponse.nombre', 'lineaProduccionResponse.nombre']"
+        sortField="fechaAprobacion"
+        [sortOrder]="-1"
+        stripedRows
+        #dt>
+
+        <ng-template pTemplate="caption">
+            <div class="ds-caption">
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                        pInputText
+                        placeholder="Buscar por solicitante o línea..."
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="idSolicitud">#</th>
+                <th pSortableColumn="usuarioResponse.nombre">Solicitante</th>
+                <th pSortableColumn="lineaProduccionResponse.nombre">Línea de Producción</th>
+                <th pSortableColumn="aprobadoPor.nombre">Aprobado por</th>
+                <th class="ds-col-center">Materiales</th>
+                <th pSortableColumn="fechaAprobacion">Fecha Aprobación</th>
+                <th class="ds-col-center">Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-solicitud>
+            <tr>
+                <td class="ds-id">#{{ solicitud.idSolicitud }}</td>
+                <td>
+                    <div class="ds-solicitante">
+            <span class="ds-solicitante__nombre">
+              {{ solicitud.usuarioResponse.nombre }} {{ solicitud.usuarioResponse.apellido }}
+            </span>
+                        <span class="ds-solicitante__linea">{{ solicitud.lineaProduccionResponse.nombre }}</span>
+                    </div>
+                </td>
+                <td class="ds-linea">{{ solicitud.lineaProduccionResponse.nombre }}</td>
+                <td class="ds-secondary">
+                    {{ solicitud.aprobadoPor?.nombre }} {{ solicitud.aprobadoPor?.apellido }}
+                </td>
+                <td class="ds-col-center ds-secondary">{{ solicitud.detalles.length }} ítem(s)</td>
+                <td class="ds-secondary">{{ solicitud.fechaAprobacion | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td class="ds-col-center">
+                    <div class="ds-acciones">
+                        <p-button
+                            icon="pi pi-eye"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="info"
+                            pTooltip="Ver detalle"
+                            tooltipPosition="top"
+                            (onClick)="verDetalle(solicitud)" />
+                        <p-button
+                            icon="pi pi-box"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="success"
+                            pTooltip="Registrar entrega"
+                            tooltipPosition="top"
+                            [loading]="procesando"
+                            (onClick)="confirmarEntrega(solicitud)" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7">
+                    <div class="ds-empty">
+                        <i class="pi pi-check-circle"></i>
+                        <span>No hay solicitudes pendientes de despacho</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<!-- dialog detalle -->
+<p-dialog
+    [(visible)]="dialogDetalleVisible"
+    [modal]="true"
+    [style]="{ width: '620px' }"
+    [breakpoints]="{ '768px': '90vw' }"
+    [draggable]="false">
+
+    <ng-template #header>
+        <div class="ds-dialog-header">
+            <i class="pi pi-box"></i>
+            <span>Despacho Solicitud #{{ solicitudSeleccionada?.idSolicitud }}</span>
+        </div>
+    </ng-template>
+
+    <div class="ds-detalle" *ngIf="solicitudSeleccionada">
+
+        <div class="ds-detalle__info">
+            <div class="ds-info-item">
+                <span class="ds-info-item__label">Solicitante</span>
+                <span class="ds-info-item__value">
+          {{ solicitudSeleccionada.usuarioResponse.nombre }} {{ solicitudSeleccionada.usuarioResponse.apellido }}
+        </span>
+            </div>
+            <div class="ds-info-item">
+                <span class="ds-info-item__label">Línea de Producción</span>
+                <span class="ds-info-item__value">{{ solicitudSeleccionada.lineaProduccionResponse.nombre }}</span>
+            </div>
+            <div class="ds-info-item">
+                <span class="ds-info-item__label">Aprobado por</span>
+                <span class="ds-info-item__value">
+          {{ solicitudSeleccionada.aprobadoPor?.nombre }} {{ solicitudSeleccionada.aprobadoPor?.apellido }}
+        </span>
+            </div>
+            <div class="ds-info-item">
+                <span class="ds-info-item__label">Fecha aprobación</span>
+                <span class="ds-info-item__value">
+          {{ solicitudSeleccionada.fechaAprobacion | date: 'dd/MM/yyyy HH:mm' }}
+        </span>
+            </div>
+            <div class="ds-info-item" *ngIf="solicitudSeleccionada.observaciones">
+                <span class="ds-info-item__label">Observaciones</span>
+                <span class="ds-info-item__value">{{ solicitudSeleccionada.observaciones }}</span>
+            </div>
+        </div>
+
+        <p-divider />
+
+        <span class="ds-detalle__subtitle">Materiales a despachar</span>
+
+        <p-table [value]="solicitudSeleccionada.detalles" [tableStyle]="{ 'min-width': '100%' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Material</th>
+                    <th class="ds-col-center">Cantidad</th>
+                    <th>Observación</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detalle>
+                <tr>
+                    <td>
+                        <span class="ds-mat-nombre">{{ detalle.material.nombre }}</span>
+                        <span class="ds-mat-unidad">{{ detalle.material.unidadMedida }}</span>
+                    </td>
+                    <td class="ds-col-center ds-cantidad">{{ detalle.cantidadSolicitada }}</td>
+                    <td class="ds-secondary">{{ detalle.observacion || '—' }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </div>
+
+    <ng-template #footer>
+        <div class="ds-dialog-footer">
+            <p-button
+                label="Cerrar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="dialogDetalleVisible = false" />
+            <p-button
+                label="Confirmar entrega"
+                icon="pi pi-box"
+                severity="success"
+                [loading]="procesando"
+                (onClick)="confirmarEntrega(solicitudSeleccionada!)" />
+        </div>
+    </ng-template>
+
+</p-dialog>

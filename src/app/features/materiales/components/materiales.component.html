@@ -1,0 +1,328 @@
+<p-toast />
+
+<div class="mat-container">
+
+    <div class="mat-header">
+        <div class="mat-header__info">
+            <h2>Materiales</h2>
+            <span>Gestión de materiales e insumos de bodega</span>
+        </div>
+        <p-button
+            label="Nuevo Material"
+            icon="pi pi-plus"
+            (onClick)="abrirDrawerCrear()" />
+    </div>
+
+    <p-table
+        [value]="materiales"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [globalFilterFields]="['codigo', 'nombre', 'categoria', 'tipoInventario']"
+        stripedRows
+        #dt>
+
+        <ng-template pTemplate="caption">
+            <div class="mat-caption">
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                        pInputText
+                        placeholder="Buscar material..."
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="codigo">Código <p-sortIcon field="codigo" /></th>
+                <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre" /></th>
+                <th>Categoría</th>
+                <th>Unidad</th>
+                <th class="mat-col-center">Stock Actual</th>
+                <th class="mat-col-center">Tipo Inventario</th>
+                <th class="mat-col-center">Estado</th>
+                <th class="mat-col-center">Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-material>
+            <tr>
+                <td>
+                    <span class="mat-codigo">{{ material.codigo }}</span>
+                </td>
+                <td class="mat-nombre">{{ material.nombre }}</td>
+                <td class="mat-secondary">{{ material.categoria }}</td>
+                <td class="mat-secondary">{{ material.unidadMedida.nombre }}</td>
+                <td class="mat-col-center">
+                    <span [class]="material.isBajoStock ? 'mat-stock mat-stock--bajo' : 'mat-stock'">
+                        <i *ngIf="material.isBajoStock" class="pi pi-exclamation-triangle"></i>
+                        {{ material.cantidadActualStock }} / {{ material.cantidadMinimaStock }}
+                    </span>
+                </td>
+                <td class="mat-col-center">
+                    <p-tag
+                        [value]="material.tipoInventario"
+                        [severity]="getInventarioSeverity(material.tipoInventario)">
+                    </p-tag>
+                </td>
+                <td class="mat-col-center">
+                    <p-tag
+                        [value]="material.activo ? 'Activo' : 'Inactivo'"
+                        [severity]="material.activo ? 'success' : 'danger'"
+                        [rounded]="true" />
+                </td>
+                <td class="mat-col-center">
+                    <div class="mat-acciones">
+                        <p-button
+                            icon="pi pi-box"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="help"
+                            pTooltip="Ajustar Stock"
+                            tooltipPosition="top"
+                            (onClick)="abrirDialogStock(material)" />
+                        <p-button
+                            icon="pi pi-pencil"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="info"
+                            pTooltip="Editar"
+                            tooltipPosition="top"
+                            (onClick)="abrirDrawerEditar(material)" />
+                        <p-button
+                            [icon]="material.activo ? 'pi pi-ban' : 'pi pi-check-circle'"
+                            [rounded]="true"
+                            [text]="true"
+                            [severity]="material.activo ? 'danger' : 'success'"
+                            [pTooltip]="material.activo ? 'Desactivar' : 'Activar'"
+                            tooltipPosition="top"
+                            (onClick)="toggleActivo(material)" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="8">
+                    <div class="mat-empty">
+                        <i class="pi pi-box"></i>
+                        <span>No hay materiales registrados</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<p-dialog
+    header="Ajuste Manual de Stock"
+    [(visible)]="dialogStockVisible"
+    [modal]="true"
+    [style]="{ width: '440px' }"
+    [draggable]="false"
+    [resizable]="false">
+
+    <div *ngIf="materialParaStock" class="adj-material-info">
+        <p class="adj-material-nombre">{{ materialParaStock.nombre }}</p>
+        <p class="adj-material-stock">
+            Stock actual: <strong>{{ materialParaStock.cantidadActualStock }} {{ materialParaStock.unidadMedida.nombre }}</strong>
+        </p>
+    </div>
+
+    <form [formGroup]="formStock" class="adj-form">
+
+        <div class="adj-field">
+            <label>Cantidad a sumar/restar <span class="adj-required">*</span></label>
+            <p-inputnumber
+                formControlName="cantidad"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                spinnerMode="horizontal"
+                decrementButtonClass="p-button-danger"
+                incrementButtonClass="p-button-success"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                [minFractionDigits]="0"
+                [maxFractionDigits]="3"
+                placeholder="Ej: 50 (Entrada) o -5 (Salida)"
+                styleClass="w-full"
+                [class.ng-invalid]="formStock.get('cantidad')?.invalid && formStock.get('cantidad')?.touched">
+            </p-inputnumber>
+            <small class="adj-hint">Positivos para ingresos, negativos para salidas/mermas.</small>
+        </div>
+
+        <div class="adj-field">
+            <label>Observación o Motivo <span class="adj-required">*</span></label>
+            <textarea
+                pTextarea
+                formControlName="observacion"
+                placeholder="Ej: Factura Proveedor #1234, Material caducado, etc."
+                [rows]="3"
+                [autoResize]="true"
+                [class.ng-invalid]="formStock.get('observacion')?.invalid && formStock.get('observacion')?.touched">
+            </textarea>
+            <small *ngIf="formStock.get('observacion')?.invalid && formStock.get('observacion')?.touched" class="adj-error">
+                Debes justificar este movimiento.
+            </small>
+        </div>
+
+    </form>
+
+    <ng-template pTemplate="footer">
+        <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" (onClick)="cerrarDialogStock()" />
+        <p-button label="Registrar Movimiento" icon="pi pi-check" [loading]="guardandoStock" [disabled]="formStock.invalid" (onClick)="guardarStock()" />
+    </ng-template>
+</p-dialog>
+
+<p-drawer
+    [(visible)]="drawerVisible"
+    position="right"
+    [style]="{ width: '480px' }"
+    [modal]="true">
+
+    <ng-template #header>
+        <div class="mat-drawer-header">
+            <i [class]="editando ? 'pi pi-pencil' : 'pi pi-plus-circle'"></i>
+            <span>{{ editando ? 'Editar Material' : 'Nuevo Material' }}</span>
+        </div>
+    </ng-template>
+
+    <form [formGroup]="form" class="mat-form">
+
+        <div class="mat-field">
+            <label>Código <span class="mat-required">*</span></label>
+            <input
+                pInputText
+                formControlName="codigo"
+                placeholder="Ej: MAT-001"
+                [class.ng-invalid]="form.get('codigo')?.invalid && form.get('codigo')?.touched"
+                [class.ng-dirty]="form.get('codigo')?.touched" />
+            <small *ngIf="form.get('codigo')?.invalid && form.get('codigo')?.touched">
+                El código es requerido
+            </small>
+        </div>
+
+        <div class="mat-field">
+            <label>Nombre <span class="mat-required">*</span></label>
+            <input
+                pInputText
+                formControlName="nombre"
+                placeholder="Ej: Acero inoxidable"
+                [class.ng-invalid]="form.get('nombre')?.invalid && form.get('nombre')?.touched"
+                [class.ng-dirty]="form.get('nombre')?.touched" />
+            <small *ngIf="form.get('nombre')?.invalid && form.get('nombre')?.touched">
+                El nombre es requerido
+            </small>
+        </div>
+
+        <div class="mat-field">
+            <label>Descripción</label>
+            <textarea
+                pTextarea
+                formControlName="descripcion"
+                placeholder="Descripción del material"
+                [rows]="2"
+                [autoResize]="true">
+      </textarea>
+        </div>
+
+        <div class="mat-row">
+            <div class="mat-field">
+                <label>Unidad de Medida <span class="mat-required">*</span></label>
+                <p-select
+                    formControlName="unidadMedidaId"
+                    [options]="unidadesMedida"
+                    optionLabel="nombre"
+                    optionValue="uuid"
+                    placeholder="Seleccionar"
+                    [class.ng-invalid]="form.get('unidadMedidaId')?.invalid && form.get('unidadMedidaId')?.touched" />
+                <small *ngIf="form.get('unidadMedidaId')?.invalid && form.get('unidadMedidaId')?.touched">
+                    Requerido
+                </small>
+            </div>
+
+            <div class="mat-field">
+                <label>Categoría <span class="mat-required">*</span></label>
+                <input
+                    pInputText
+                    formControlName="categoria"
+                    placeholder="Ej: Materia Prima"
+                    [class.ng-invalid]="form.get('categoria')?.invalid && form.get('categoria')?.touched"
+                    [class.ng-dirty]="form.get('categoria')?.touched" />
+                <small *ngIf="form.get('categoria')?.invalid && form.get('categoria')?.touched">
+                    Requerido
+                </small>
+            </div>
+        </div>
+
+        <div class="mat-row">
+            <div class="mat-field">
+                <label>Bodega <span class="mat-required">*</span></label>
+                <p-select
+                    formControlName="tipoInventario"
+                    [options]="tiposInventario"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccionar bodega"
+                    [class.ng-invalid]="form.get('tipoInventario')?.invalid && form.get('tipoInventario')?.touched" />
+                <small *ngIf="form.get('tipoInventario')?.invalid && form.get('tipoInventario')?.touched">
+                    Requerido
+                </small>
+            </div>
+
+            <div class="mat-field">
+                <label>Stock Mínimo <span class="mat-required">*</span></label>
+                <p-inputnumber
+                    formControlName="cantidadMinima"
+                    [minFractionDigits]="0"
+                    [maxFractionDigits]="3"
+                    [min]="0"
+                    placeholder="0" />
+            </div>
+        </div>
+
+        <div class="mat-field">
+            <label>Líneas de Producción</label>
+            <div class="mat-lineas">
+                <div
+                    *ngFor="let linea of lineas"
+                    class="mat-linea-item"
+                    [class.mat-linea-item--selected]="isLineaSeleccionada(linea.uuid)"
+                    (click)="toggleLineaSeleccionada(linea.uuid)">
+                    <p-checkbox
+                        [binary]="true"
+                        [ngModel]="isLineaSeleccionada(linea.uuid)"
+                        [ngModelOptions]="{ standalone: true }"
+                        (click)="$event.stopPropagation()" />
+                    <span>{{ linea.nombre }}</span>
+                </div>
+                <div *ngIf="lineas.length === 0" class="mat-lineas-empty">
+                    No hay líneas disponibles
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <ng-template #footer>
+        <div class="mat-drawer-footer">
+            <p-button
+                label="Cancelar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="cerrarDrawer()" />
+            <p-button
+                [label]="editando ? 'Guardar cambios' : 'Crear material'"
+                [icon]="editando ? 'pi pi-check' : 'pi pi-plus'"
+                [loading]="guardando"
+                [disabled]="form.invalid"
+                (onClick)="guardar()" />
+        </div>
+    </ng-template>
+
+</p-drawer>

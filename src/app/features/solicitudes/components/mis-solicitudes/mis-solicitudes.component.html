@@ -1,0 +1,182 @@
+<p-toast />
+
+<div class="ms-container">
+
+    <!-- header -->
+    <div class="ms-header">
+        <div class="ms-header__info">
+            <h2>Mis Solicitudes</h2>
+            <span>Historial de tus solicitudes de materiales</span>
+        </div>
+        <p-button
+            label="Nueva Solicitud"
+            icon="pi pi-plus"
+            routerLink="/solicitudes/crear" />
+    </div>
+
+    <!-- tabla -->
+    <p-table
+        [value]="solicitudes"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [globalFilterFields]="['lineaProduccionResponse.nombre', 'estadoSolicitud']"
+        sortField="fechaSolicitud"
+        [sortOrder]="-1"
+        stripedRows
+        #dt>
+
+        <ng-template pTemplate="caption">
+            <div class="ms-caption">
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                        pInputText
+                        placeholder="Buscar solicitud..."
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="idSolicitud"># <p-sortIcon field="idSolicitud" /></th>
+                <th pSortableColumn="lineaProduccionResponse.nombre">
+                    Línea de Producción <p-sortIcon field="lineaProduccionResponse.nombre" />
+                </th>
+                <th class="ms-col-center" pSortableColumn="estadoSolicitud">
+                    Estado <p-sortIcon field="estadoSolicitud" />
+                </th>
+                <th>Materiales</th>
+                <th pSortableColumn="fechaSolicitud">
+                    Fecha <p-sortIcon field="fechaSolicitud" />
+                </th>
+                <th class="ms-col-center">Detalle</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-solicitud>
+            <tr>
+                <td class="ms-id">#{{ solicitud.idSolicitud }}</td>
+                <td class="ms-linea">{{ solicitud.lineaProduccionResponse.nombre }}</td>
+                <td class="ms-col-center">
+                    <p-tag
+                        [value]="solicitud.estadoSolicitud"
+                        [severity]="getSeverity(solicitud.estadoSolicitud)"
+                        [icon]="getEstadoIcon(solicitud.estadoSolicitud)"
+                        [rounded]="true" />
+                </td>
+                <td class="ms-secondary">{{ solicitud.detalles.length }} ítem(s)</td>
+                <td class="ms-secondary">{{ solicitud.fechaSolicitud | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td class="ms-col-center">
+                    <p-button
+                        icon="pi pi-eye"
+                        [rounded]="true"
+                        [text]="true"
+                        severity="info"
+                        pTooltip="Ver detalle"
+                        tooltipPosition="top"
+                        (onClick)="verDetalle(solicitud)" />
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6">
+                    <div class="ms-empty">
+                        <i class="pi pi-inbox"></i>
+                        <span>No tienes solicitudes registradas</span>
+                        <p-button
+                            label="Crear primera solicitud"
+                            icon="pi pi-plus"
+                            severity="secondary"
+                            [outlined]="true"
+                            routerLink="/solicitudes/crear" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<!-- dialog detalle -->
+<p-dialog
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [breakpoints]="{ '768px': '90vw' }"
+    [draggable]="false">
+
+    <ng-template #header>
+        <div class="ms-dialog-header">
+            <i class="pi pi-file-check"></i>
+            <span>Detalle Solicitud #{{ solicitudSeleccionada?.idSolicitud }}</span>
+        </div>
+    </ng-template>
+
+    <div class="ms-detalle" *ngIf="solicitudSeleccionada">
+
+        <!-- info general -->
+        <div class="ms-detalle__info">
+            <div class="ms-info-item">
+                <span class="ms-info-item__label">Línea de Producción</span>
+                <span class="ms-info-item__value">{{ solicitudSeleccionada.lineaProduccionResponse.nombre }}</span>
+            </div>
+            <div class="ms-info-item">
+                <span class="ms-info-item__label">Estado</span>
+                <p-tag
+                    [value]="solicitudSeleccionada.estadoSolicitud"
+                    [severity]="getSeverity(solicitudSeleccionada.estadoSolicitud)"
+                    [icon]="getEstadoIcon(solicitudSeleccionada.estadoSolicitud)"
+                    [rounded]="true" />
+            </div>
+            <div class="ms-info-item" *ngIf="solicitudSeleccionada.aprobadoPor">
+                <span class="ms-info-item__label">Aprobado por</span>
+                <span class="ms-info-item__value">
+          {{ solicitudSeleccionada.aprobadoPor?.nombre }} {{ solicitudSeleccionada.aprobadoPor?.apellido }}
+        </span>
+            </div>
+            <div class="ms-info-item" *ngIf="solicitudSeleccionada.observaciones">
+                <span class="ms-info-item__label">Observaciones</span>
+                <span class="ms-info-item__value">{{ solicitudSeleccionada.observaciones }}</span>
+            </div>
+        </div>
+
+        <p-divider />
+
+        <!-- materiales -->
+        <span class="ms-detalle__subtitle">Materiales solicitados</span>
+        <p-table [value]="solicitudSeleccionada.detalles" [tableStyle]="{ 'min-width': '100%' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Material</th>
+                    <th class="ms-col-center">Cantidad</th>
+                    <th>Observación</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detalle>
+                <tr>
+                    <td>
+                        <span class="ms-mat-nombre">{{ detalle.material.nombre }}</span>
+                        <span class="ms-mat-unidad">{{ detalle.material.unidadMedida.nombre }}</span>
+                    </td>
+                    <td class="ms-col-center ms-cantidad">{{ detalle.cantidadSolicitada }}</td>
+                    <td class="ms-secondary">{{ detalle.observacion || '—' }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </div>
+
+    <ng-template #footer>
+        <p-button
+            label="Cerrar"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="dialogVisible = false" />
+    </ng-template>
+
+</p-dialog>

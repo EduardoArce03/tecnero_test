@@ -1,0 +1,195 @@
+:host {
+    display: block;
+    padding: 1.5rem;
+}
+
+.ds-container {
+    background: var(--surface-card);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+}
+
+.ds-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        span {
+            font-size: 0.875rem;
+            color: var(--text-color-secondary);
+        }
+    }
+
+    &__badge {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--green-100);
+        color: var(--green-700);
+        padding: 0.4rem 0.85rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+
+        i { font-size: 0.85rem; }
+    }
+}
+
+.ds-caption {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 0.75rem;
+}
+
+.ds-col-center {
+    text-align: center !important;
+}
+
+.ds-id {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.ds-solicitante {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+
+    &__nombre {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    &__linea {
+        font-size: 0.78rem;
+        color: var(--text-color-secondary);
+    }
+}
+
+.ds-linea {
+    font-weight: 500;
+}
+
+.ds-secondary {
+    color: var(--text-color-secondary);
+    font-size: 0.875rem;
+}
+
+.ds-acciones {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.ds-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 3rem 0;
+
+    i {
+        font-size: 2.5rem;
+        color: var(--green-300);
+    }
+
+    span {
+        color: var(--text-color-secondary);
+        font-size: 0.95rem;
+    }
+}
+
+.ds-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+
+    i { color: var(--primary-color); }
+}
+
+.ds-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.ds-detalle {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &__info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    &__subtitle {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--text-color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+}
+
+.ds-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    &__label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-color-secondary);
+    }
+
+    &__value {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+}
+
+.ds-mat-nombre {
+    display: block;
+    font-weight: 500;
+}
+
+.ds-mat-unidad {
+    font-size: 0.78rem;
+    color: var(--text-color-secondary);
+}
+
+.ds-cantidad {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+:host ::ng-deep {
+    .p-datatable-thead > tr > th {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--text-color-secondary);
+    }
+}

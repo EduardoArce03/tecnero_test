@@ -1,0 +1,90 @@
+<p-toast />
+
+<div class="crear-plan-wrap">
+    <div class="ci-card">
+
+        <!-- ── Header ─────────────────────────────────── -->
+        <div class="ci-card-header">
+            <div class="header-icon">
+                <i class="pi pi-plus-circle"></i>
+            </div>
+            <div class="header-text">
+                <h5 class="ci-card-title">Crear Plan</h5>
+                <p class="ci-card-subtitle">Define el nombre, precio y módulos del plan</p>
+            </div>
+        </div>
+
+        <!-- ── Cuerpo ──────────────────────────────────── -->
+        <div class="ci-card-body">
+
+            <!-- Nombre + Precio en fila -->
+            <div class="fields-row">
+                <div class="field">
+                    <label class="field-label">Nombre del Plan</label>
+                    <input
+                        pInputText
+                        [(ngModel)]="nombre"
+                        placeholder="Ej: Plan Básico"
+                        class="w-full ci-input"
+                    />
+                </div>
+                <div class="field">
+                    <label class="field-label">Precio (USD)</label>
+                    <p-inputNumber
+                        [(ngModel)]="precio"
+                        mode="currency"
+                        currency="USD"
+                        locale="es-EC"
+                        placeholder="0.00"
+                        styleClass="w-full ci-input-number">
+                    </p-inputNumber>
+                </div>
+            </div>
+
+            <!-- Módulos -->
+            <div class="field">
+                <label class="field-label">Módulos incluidos</label>
+                <p-multiSelect
+                    [options]="featuresOptions"
+                    appendTo="body"
+                    [(ngModel)]="featuresSeleccionadas"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Selecciona los módulos del plan"
+                    styleClass="w-full ci-multiselect"
+                    [showToggleAll]="true"
+                    [filter]="true"
+                    filterPlaceholder="Buscar módulo...">
+                </p-multiSelect>
+
+                <!-- Tags de módulos seleccionados -->
+                @if (featuresSeleccionadas.length > 0) {
+                    <div class="modules-tags">
+                        @for (f of featuresSeleccionadas; track f) {
+                            <span class="module-tag">{{ f }}</span>
+                        }
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <!-- ── Footer ─────────────────────────────────── -->
+        <div class="ci-card-footer">
+            <p-button
+                label="Cancelar"
+                severity="secondary"
+                [outlined]="true"
+                styleClass="ci-btn-cancel">
+            </p-button>
+            <p-button
+                label="Guardar Plan"
+                icon="pi pi-check"
+                [disabled]="!nombre"
+                (click)="crearPlan()"
+                styleClass="ci-btn-save">
+            </p-button>
+        </div>
+
+    </div>
+</div>

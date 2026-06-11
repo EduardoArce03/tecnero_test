@@ -1,0 +1,231 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="as-container">
+
+    <!-- header -->
+    <div class="as-header">
+        <div class="as-header__info">
+            <h2>Solicitudes Pendientes</h2>
+            <span>Aprueba o rechaza las solicitudes de materiales</span>
+        </div>
+        <div class="as-header__badge" *ngIf="solicitudes.length > 0">
+            <i class="pi pi-clock"></i>
+            <span>{{ solicitudes.length }} pendiente{{ solicitudes.length > 1 ? 's' : '' }}</span>
+        </div>
+    </div>
+
+    <!-- tabla -->
+    <p-table
+        [value]="solicitudes"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [globalFilterFields]="['usuarioResponse.nombre', 'lineaProduccionResponse.nombre']"
+        sortField="fechaSolicitud"
+        [sortOrder]="-1"
+        stripedRows
+        #dt>
+
+        <ng-template pTemplate="caption">
+            <div class="as-caption">
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                        pInputText
+                        placeholder="Buscar por solicitante o línea..."
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="idSolicitud">#</th>
+                <th pSortableColumn="usuarioResponse.nombre">Solicitante</th>
+                <th pSortableColumn="lineaProduccionResponse.nombre">Línea de Producción</th>
+                <th class="as-col-center">Materiales</th>
+                <th pSortableColumn="fechaSolicitud">Fecha</th>
+                <th class="as-col-center">Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-solicitud>
+            <tr>
+                <td class="as-id">#{{ solicitud.idSolicitud }}</td>
+                <td>
+                    <div class="as-solicitante">
+            <span class="as-solicitante__nombre">
+              {{ solicitud.usuarioResponse.nombre }} {{ solicitud.usuarioResponse.apellido }}
+            </span>
+                        <span class="as-solicitante__cargo">{{ solicitud.usuarioResponse.cargo }}</span>
+                    </div>
+                </td>
+                <td class="as-linea">{{ solicitud.lineaProduccionResponse.nombre }}</td>
+                <td class="as-col-center as-secondary">{{ solicitud.detalles.length }} ítem(s)</td>
+                <td class="as-secondary">{{ solicitud.fechaSolicitud | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td class="as-col-center">
+                    <div class="as-acciones">
+                        <p-button
+                            icon="pi pi-eye"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="info"
+                            pTooltip="Ver detalle"
+                            tooltipPosition="top"
+                            (onClick)="verDetalle(solicitud)" />
+                        <p-button
+                            icon="pi pi-check"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="success"
+                            pTooltip="Aprobar"
+                            tooltipPosition="top"
+                            [loading]="procesando"
+                            (onClick)="confirmarAprobar(solicitud)" />
+                        <p-button
+                            icon="pi pi-times"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="danger"
+                            pTooltip="Rechazar"
+                            tooltipPosition="top"
+                            (onClick)="abrirDialogRechazar(solicitud)" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6">
+                    <div class="as-empty">
+                        <i class="pi pi-check-circle"></i>
+                        <span>No hay solicitudes pendientes</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<!-- dialog ver detalle -->
+<p-dialog
+    [(visible)]="dialogDetalleVisible"
+    [modal]="true"
+    [style]="{ width: '620px' }"
+    [breakpoints]="{ '768px': '90vw' }"
+    [draggable]="false">
+
+    <ng-template #header>
+        <div class="as-dialog-header">
+            <i class="pi pi-file-check"></i>
+            <span>Detalle Solicitud #{{ solicitudSeleccionada?.idSolicitud }}</span>
+        </div>
+    </ng-template>
+
+    <div class="as-detalle" *ngIf="solicitudSeleccionada">
+
+        <div class="as-detalle__info">
+            <div class="as-info-item">
+                <span class="as-info-item__label">Solicitante</span>
+                <span class="as-info-item__value">
+          {{ solicitudSeleccionada.usuarioResponse.nombre }} {{ solicitudSeleccionada.usuarioResponse.apellido }}
+        </span>
+            </div>
+            <div class="as-info-item">
+                <span class="as-info-item__label">Línea de Producción</span>
+                <span class="as-info-item__value">{{ solicitudSeleccionada.lineaProduccionResponse.nombre }}</span>
+            </div>
+            <div class="as-info-item" *ngIf="solicitudSeleccionada.observaciones">
+                <span class="as-info-item__label">Observaciones</span>
+                <span class="as-info-item__value">{{ solicitudSeleccionada.observaciones }}</span>
+            </div>
+        </div>
+
+        <p-divider />
+
+        <span class="as-detalle__subtitle">Materiales solicitados</span>
+        <p-table [value]="solicitudSeleccionada.detalles" [tableStyle]="{ 'min-width': '100%' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Material</th>
+                    <th class="as-col-center">Cantidad</th>
+                    <th>Observación</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detalle>
+                <tr>
+                    <td>
+                        <span class="as-mat-nombre">{{ detalle.material.nombre }}</span>
+                        <span class="as-mat-unidad">{{ detalle.material.unidadMedida }}</span>
+                    </td>
+                    <td class="as-col-center as-cantidad">{{ detalle.cantidadSolicitada }}</td>
+                    <td class="as-secondary">{{ detalle.observacion || '—' }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </div>
+
+    <ng-template #footer>
+        <div class="as-dialog-footer">
+            <p-button
+                label="Cerrar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="dialogDetalleVisible = false" />
+            <p-button
+                label="Rechazar"
+                icon="pi pi-times"
+                severity="danger"
+                [outlined]="true"
+                (onClick)="dialogDetalleVisible = false; abrirDialogRechazar(solicitudSeleccionada!)" />
+            <p-button
+                label="Aprobar"
+                icon="pi pi-check"
+                severity="success"
+                (onClick)="dialogDetalleVisible = false; confirmarAprobar(solicitudSeleccionada!)" />
+        </div>
+    </ng-template>
+
+</p-dialog>
+
+<!-- dialog rechazar -->
+<p-dialog
+    [(visible)]="dialogRechazarVisible"
+    [modal]="true"
+    [style]="{ width: '440px' }"
+    [draggable]="false"
+    header="Rechazar Solicitud">
+
+    <div class="as-rechazar-body">
+        <div class="as-rechazar-warning">
+            <i class="pi pi-exclamation-triangle"></i>
+            <span>
+        ¿Estás seguro de rechazar la solicitud
+        <strong>#{{ solicitudSeleccionada?.idSolicitud }}</strong>?
+        Esta acción notificará al solicitante.
+      </span>
+        </div>
+    </div>
+
+    <ng-template #footer>
+        <div class="as-dialog-footer">
+            <p-button
+                label="Cancelar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="dialogRechazarVisible = false" />
+            <p-button
+                label="Sí, rechazar"
+                icon="pi pi-times"
+                severity="danger"
+                [loading]="procesando"
+                (onClick)="rechazar()" />
+        </div>
+    </ng-template>
+
+</p-dialog>

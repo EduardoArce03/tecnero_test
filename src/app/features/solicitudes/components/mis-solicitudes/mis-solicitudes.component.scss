@@ -1,0 +1,156 @@
+:host {
+    display: block;
+    padding: 1.5rem;
+}
+
+.ms-container {
+    background: var(--surface-card);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+}
+
+.ms-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        span {
+            font-size: 0.875rem;
+            color: var(--text-color-secondary);
+        }
+    }
+}
+
+.ms-caption {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 0.75rem;
+}
+
+.ms-col-center {
+    text-align: center !important;
+}
+
+.ms-id {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.ms-linea {
+    font-weight: 500;
+}
+
+.ms-secondary {
+    color: var(--text-color-secondary);
+    font-size: 0.875rem;
+}
+
+.ms-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 0;
+
+    i {
+        font-size: 2.5rem;
+        color: var(--surface-400);
+    }
+
+    span {
+        color: var(--text-color-secondary);
+        font-size: 0.95rem;
+    }
+}
+
+// dialog
+.ms-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+
+    i {
+        color: var(--primary-color);
+    }
+}
+
+.ms-detalle {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &__info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    &__subtitle {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+}
+
+.ms-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    &__label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-color-secondary);
+    }
+
+    &__value {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+}
+
+.ms-mat-nombre {
+    display: block;
+    font-weight: 500;
+}
+
+.ms-mat-unidad {
+    font-size: 0.78rem;
+    color: var(--text-color-secondary);
+}
+
+.ms-cantidad {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+:host ::ng-deep {
+    .p-datatable-thead > tr > th {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--text-color-secondary);
+    }
+}

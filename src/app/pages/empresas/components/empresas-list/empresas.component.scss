@@ -1,0 +1,245 @@
+// ── Card container ────────────────────────────────────────
+.ci-card {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+// ── Card header ───────────────────────────────────────────
+.ci-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--surface-border);
+    gap: 12px;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.ci-card-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ci-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.ci-card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-color-secondary);
+}
+
+.ci-card-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+        width: 100%;
+
+        p-iconfield {
+            flex: 1;
+        }
+    }
+}
+
+// ── Search input ──────────────────────────────────────────
+.ci-search-input {
+    font-size: 0.82rem !important;
+    padding: 7px 10px !important;
+    border-radius: 7px !important;
+    width: 220px;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+}
+
+// ── Primary button ────────────────────────────────────────
+.ci-btn-primary {
+    font-size: 0.82rem !important;
+    padding: 7px 14px !important;
+    border-radius: 7px !important;
+    white-space: nowrap;
+}
+
+// ── Table overrides ───────────────────────────────────────
+:host ::ng-deep .ci-table {
+
+    .p-datatable-thead > tr > th {
+        background: var(--surface-ground);
+        color: var(--text-color-secondary);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 10px 16px;
+        border-color: var(--surface-border);
+        white-space: nowrap;
+    }
+
+    .p-datatable-tbody > tr > td {
+        padding: 12px 16px;
+        border-color: var(--surface-border);
+        font-size: 0.85rem;
+        color: var(--text-color);
+        vertical-align: middle;
+    }
+
+    .p-datatable-tbody > tr:hover > td {
+        background: var(--surface-hover);
+    }
+
+    // Quitar el gridinline de Sakai por defecto
+    &.p-datatable-gridlines .p-datatable-thead > tr > th,
+    &.p-datatable-gridlines .p-datatable-tbody > tr > td {
+        border-width: 0 0 1px 0;
+    }
+
+    // Paginador
+    .p-paginator {
+        padding: 10px 20px;
+        border-top: 1px solid var(--surface-border);
+        background: var(--surface-card);
+        font-size: 0.8rem;
+
+        .p-paginator-current {
+            font-size: 0.78rem;
+            color: var(--text-color-secondary);
+        }
+
+        .p-paginator-page,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-first,
+        .p-paginator-last {
+            border-radius: 6px;
+            min-width: 2rem;
+            height: 2rem;
+            font-size: 0.8rem;
+        }
+
+        .p-paginator-page.p-highlight {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+    }
+}
+
+// ── Columna de acciones ───────────────────────────────────
+.col-actions {
+    width: 96px;
+    text-align: center;
+}
+
+.actions-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+// ── Action buttons ────────────────────────────────────────
+.ci-btn-action {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 7px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 1px solid var(--surface-border) !important;
+    color: var(--text-color-secondary) !important;
+    transition: all 0.15s;
+
+    .p-button-icon {
+        font-size: 0.8rem;
+    }
+
+    &:hover {
+        border-color: var(--primary-color) !important;
+        color: var(--primary-color) !important;
+        background: var(--primary-50, color-mix(in srgb, var(--primary-color) 10%, transparent)) !important;
+    }
+
+    &.ci-btn-refresh:hover {
+        border-color: var(--green-600) !important;
+        color: var(--green-600) !important;
+        background: var(--green-50) !important;
+    }
+}
+
+// ── Celda empresa ─────────────────────────────────────────
+.empresa-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.empresa-nombre {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-color);
+}
+
+.empresa-ruc {
+    font-size: 0.75rem;
+    font-family: var(--font-family-mono, monospace);
+    color: var(--text-color-secondary);
+    letter-spacing: 0.02em;
+}
+
+// ── Representante ─────────────────────────────────────────
+.representante {
+    font-size: 0.83rem;
+    color: var(--text-color-secondary);
+}
+
+// ── Celda plan ────────────────────────────────────────────
+.plan-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+}
+
+.expiry-date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: var(--text-color-secondary);
+
+    .pi {
+        font-size: 0.72rem;
+    }
+}
+
+// ── Estado vacío ──────────────────────────────────────────
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 48px 20px;
+    color: var(--text-color-secondary);
+
+    .pi {
+        font-size: 2rem;
+        opacity: 0.4;
+    }
+
+    span {
+        font-size: 0.875rem;
+    }
+}

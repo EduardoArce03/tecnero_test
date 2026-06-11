@@ -1,0 +1,94 @@
+<p-toast />
+
+<div class="recarga-wrap">
+    <div class="ci-card">
+
+        <!-- ── Header ─────────────────────────────────── -->
+        <div class="ci-card-header">
+            <h5 class="ci-card-title">Recarga de Suscripción</h5>
+            <p class="ci-card-subtitle">Selecciona la empresa, el plan y la frecuencia de pago</p>
+        </div>
+
+        <!-- ── Pasos ──────────────────────────────────── -->
+        <div class="ci-steps">
+
+            <!-- Paso 1: Empresa -->
+            <div class="ci-step">
+                <div class="step-indicator">
+                    <div class="step-num">1</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <span class="step-label">Empresa</span>
+                    <p-select
+                        [options]="empresas"
+                        optionLabel="nombre"
+                        optionValue="accountId"
+                        placeholder="Selecciona una empresa"
+                        [formControl]="$any(form.get('accountId'))"
+                        styleClass="w-full ci-select">
+                    </p-select>
+                </div>
+            </div>
+
+            <!-- Paso 2: Plan -->
+            <div class="ci-step">
+                <div class="step-indicator">
+                    <div class="step-num">2</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                    <span class="step-label">Plan</span>
+                    <p-select
+                        [options]="planesDisponibles"
+                        optionLabel="nombre"
+                        optionValue="id"
+                        placeholder="Selecciona un plan"
+                        [formControl]="$any(form.get('planId'))"
+                        styleClass="w-full ci-select">
+                    </p-select>
+                </div>
+            </div>
+
+            <!-- Paso 3: Frecuencia -->
+            <div class="ci-step ci-step--last">
+                <div class="step-indicator">
+                    <div class="step-num">3</div>
+                </div>
+                <div class="step-content">
+                    <span class="step-label">Frecuencia de pago</span>
+                    <p-selectButton
+                        [options]="opcionesTiempo"
+                        [formControl]="$any(form.get('tipoTiempoPlan'))"
+                        optionLabel="label"
+                        optionValue="value"
+                        styleClass="ci-select-button">
+                    </p-selectButton>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── Footer ─────────────────────────────────── -->
+        <div class="ci-card-footer">
+            <span class="footer-hint">
+                <i class="pi pi-info-circle"></i>
+                @if (!form.get('accountId')?.value) {
+                    Selecciona una empresa para continuar
+                } @else if (!form.get('planId')?.value) {
+                    Selecciona un plan para continuar
+                } @else {
+                    Todo listo para confirmar la recarga
+                }
+            </span>
+            <p-button
+                label="Confirmar y Pagar"
+                icon="pi pi-shopping-cart"
+                [disabled]="form.invalid"
+                (click)="confirmarRecarga()"
+                styleClass="ci-btn-confirm">
+            </p-button>
+        </div>
+
+    </div>
+</div>

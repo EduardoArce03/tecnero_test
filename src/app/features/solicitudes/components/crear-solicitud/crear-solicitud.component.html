@@ -1,0 +1,182 @@
+<p-toast />
+
+<div class="cs-container">
+
+    <div class="cs-header">
+        <div class="cs-header__info">
+            <h2>Nueva Solicitud de Materiales</h2>
+            <span>Selecciona la línea, la bodega de origen y agrega los materiales requeridos</span>
+        </div>
+    </div>
+
+    <div class="cs-body">
+
+        <div class="cs-card">
+            <div class="cs-card__title">
+                <span class="cs-step">1</span>
+                <span>Datos generales</span>
+            </div>
+
+            <form [formGroup]="form" class="cs-form">
+                <div class="cs-row">
+                    <div class="cs-field">
+                        <label>Línea de Producción <span class="cs-required">*</span></label>
+                        <p-select
+                            formControlName="lineaProduccionId"
+                            [options]="lineas"
+                            optionLabel="nombre"
+                            optionValue="uuid"
+                            placeholder="Selecciona una línea"
+                            [class.ng-invalid]="form.get('lineaProduccionId')?.invalid && form.get('lineaProduccionId')?.touched" />
+                        <small *ngIf="form.get('lineaProduccionId')?.invalid && form.get('lineaProduccionId')?.touched">
+                            Selecciona una línea de producción
+                        </small>
+                    </div>
+
+                    <div class="cs-field">
+                        <label>Bodega / Inventario <span class="cs-required">*</span></label>
+                        <p-select
+                            formControlName="tipoInventario"
+                            [options]="tiposInventario"
+                            optionLabel="label"
+                            optionValue="value"
+                            placeholder="¿Qué tipo de material buscas?"
+                            (onChange)="onInventarioChange($event.value)"
+                            [class.ng-invalid]="form.get('tipoInventario')?.invalid && form.get('tipoInventario')?.touched" />
+                        <small *ngIf="form.get('tipoInventario')?.invalid && form.get('tipoInventario')?.touched">
+                            Selecciona el tipo de inventario
+                        </small>
+                    </div>
+                </div>
+
+                <div class="cs-row mt-3">
+                    <div class="cs-field" style="width: 100%;">
+                        <label>Observaciones generales</label>
+                        <textarea
+                            pTextarea
+                            formControlName="observaciones"
+                            placeholder="Notas adicionales para la solicitud..."
+                            [rows]="2"
+                            [autoResize]="true">
+                        </textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="cs-card" [class.cs-card--disabled]="form.invalid">
+            <div class="cs-card__title">
+                <span class="cs-step">2</span>
+                <span>Agregar materiales</span>
+            </div>
+
+            <div class="cs-detalle-form">
+                <div class="cs-field cs-field--grow">
+                    <label>Material</label>
+                    <p-select
+                        [(ngModel)]="materialSeleccionado"
+                        [options]="materiales"
+                        optionLabel="nombre"
+                        placeholder="Selecciona un material"
+                        [disabled]="form.invalid">
+                        <ng-template pTemplate="option" let-mat>
+                            <div class="cs-mat-option">
+                                <span class="cs-mat-option__nombre">{{ mat.nombre }}</span>
+                                <span class="cs-mat-option__stock" [class.cs-mat-option__stock--bajo]="mat.isBajoStock">
+                                    Stock: {{ mat.cantidadActualStock }} {{ mat.unidadMedida.nombre }}
+                                    <i *ngIf="mat.isBajoStock" class="pi pi-exclamation-triangle"></i>
+                                </span>
+                            </div>
+                        </ng-template>
+                    </p-select>
+                </div>
+
+                <div class="cs-field cs-field--sm">
+                    <label>Cantidad</label>
+                    <p-inputnumber
+                        [(ngModel)]="cantidadDetalle"
+                        [min]="1"
+                        [minFractionDigits]="0"
+                        [maxFractionDigits]="3" />
+                </div>
+
+                <div class="cs-field cs-field--grow">
+                    <label>Observación del ítem</label>
+                    <input
+                        pInputText
+                        [(ngModel)]="observacionDetalle"
+                        placeholder="Opcional" />
+                </div>
+
+                <div class="cs-field cs-field--btn">
+                    <label>&nbsp;</label>
+                    <p-button
+                        icon="pi pi-plus"
+                        label="Agregar"
+                        [disabled]="!materialSeleccionado || cantidadDetalle <= 0"
+                        (onClick)="agregarDetalle()" />
+                </div>
+            </div>
+
+            <div class="cs-detalles" *ngIf="detalles.length > 0">
+                <p-table [value]="detalles" [tableStyle]="{ 'min-width': '100%' }">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Material</th>
+                            <th class="cs-col-center">Cantidad</th>
+                            <th>Observación</th>
+                            <th class="cs-col-center" style="width: 60px"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-detalle>
+                        <tr>
+                            <td>
+                                <span class="cs-mat-nombre">{{ detalle.nombreMaterial }}</span>
+                                <span class="cs-mat-unidad">{{ detalle.unidadMedida }}</span>
+                            </td>
+                            <td class="cs-col-center cs-cantidad">{{ detalle.cantidadSolicitada }}</td>
+                            <td class="cs-observacion">{{ detalle.observacion || '—' }}</td>
+                            <td class="cs-col-center">
+                                <p-button
+                                    icon="pi pi-trash"
+                                    [rounded]="true"
+                                    [text]="true"
+                                    severity="danger"
+                                    pTooltip="Quitar"
+                                    (onClick)="quitarDetalle(detalle.materialId)" />
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <div class="cs-empty-detalles" *ngIf="detalles.length === 0 && form.valid">
+                <i class="pi pi-shopping-cart"></i>
+                <span>Agrega al menos un material a la solicitud</span>
+            </div>
+
+            <div class="cs-empty-detalles" *ngIf="form.invalid">
+                <i class="pi pi-arrow-up"></i>
+                <span>Completa los datos generales para cargar los materiales</span>
+            </div>
+
+        </div>
+
+        <div class="cs-footer">
+            <span class="cs-footer__hint" *ngIf="detalles.length === 0">
+                <i class="pi pi-info-circle"></i>
+                Debes agregar al menos un material
+            </span>
+            <span class="cs-footer__count" *ngIf="detalles.length > 0">
+                {{ detalles.length }} material{{ detalles.length > 1 ? 'es' : '' }} agregado{{ detalles.length > 1 ? 's' : '' }}
+            </span>
+            <p-button
+                label="Enviar Solicitud"
+                icon="pi pi-send"
+                [loading]="enviando"
+                [disabled]="!puedeEnviar"
+                (onClick)="enviarSolicitud()" />
+        </div>
+
+    </div>
+</div>

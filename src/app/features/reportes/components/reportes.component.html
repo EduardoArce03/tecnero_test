@@ -1,0 +1,179 @@
+<p-toast />
+
+<div class="rep-container">
+
+    <div class="rep-page-header">
+        <h2>Reportes</h2>
+        <span>Genera y descarga reportes del sistema de inventarios</span>
+    </div>
+
+    <div class="rep-grid">
+
+        <!-- CARD: Kardex -->
+        <div class="rep-card">
+            <div class="rep-card__header">
+                <div class="rep-card__icon rep-card__icon--blue">
+                    <i class="pi pi-book"></i>
+                </div>
+                <div>
+                    <h3>Kardex de Material</h3>
+                    <span>Historial de movimientos por material y período</span>
+                </div>
+            </div>
+
+            <p-divider />
+
+            <div class="rep-form">
+
+                <!-- tipo inventario -->
+                <div class="rep-field">
+                    <label>Tipo de Inventario <span class="rep-required">*</span></label>
+                    <p-select
+                        [(ngModel)]="tipoSeleccionadoKardex"
+                        [options]="tiposInventario"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Selecciona un tipo"
+                        (onChange)="onTipoKardexChange($event.value)" />
+                </div>
+
+                <!-- material -->
+                <div class="rep-field">
+                    <label>Material <span class="rep-required">*</span></label>
+                    <p-select
+                        [(ngModel)]="materialSeleccionado"
+                        [options]="materiales"
+                        optionLabel="nombre"
+                        placeholder="Selecciona un material"
+                        [disabled]="!tipoSeleccionadoKardex || cargandoMateriales"
+                        [loading]="cargandoMateriales">
+                        <ng-template pTemplate="option" let-mat>
+                            <div class="rep-mat-option">
+                                <span>{{ mat.nombre }}</span>
+                                <span class="rep-mat-option__codigo">{{ mat.codigo }}</span>
+                            </div>
+                        </ng-template>
+                    </p-select>
+                </div>
+
+                <!-- fechas -->
+                <div class="rep-row">
+                    <div class="rep-field">
+                        <label>Fecha Inicio <span class="rep-required">*</span></label>
+                        <p-datepicker
+                            [(ngModel)]="fechaInicio"
+                            [maxDate]="fechaFin ?? today"
+                            dateFormat="dd/mm/yy"
+                            placeholder="dd/mm/aaaa"
+                            [showIcon]="true" />
+                    </div>
+                    <div class="rep-field">
+                        <label>Fecha Fin <span class="rep-required">*</span></label>
+                        <p-datepicker
+                            [(ngModel)]="fechaFin"
+                            [minDate]="fechaInicio ?? undefined"
+                            [maxDate]="today"
+                            dateFormat="dd/mm/yy"
+                            placeholder="dd/mm/aaaa"
+                            [showIcon]="true" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="rep-card__footer">
+                <p-button
+                    label="Generar Kardex"
+                    icon="pi pi-file-pdf"
+                    [loading]="generando"
+                    [disabled]="!puedeGenerarKardex"
+                    (onClick)="generarKardex()" />
+            </div>
+        </div>
+
+        <!-- CARD: Stock Actual -->
+        <div class="rep-card">
+            <div class="rep-card__header">
+                <div class="rep-card__icon rep-card__icon--green">
+                    <i class="pi pi-box"></i>
+                </div>
+                <div>
+                    <h3>Stock Actual</h3>
+                    <span>Estado actual del inventario por tipo</span>
+                </div>
+            </div>
+
+            <p-divider />
+
+            <div class="rep-form">
+                <div class="rep-field">
+                    <label>Tipo de Inventario <span class="rep-required">*</span></label>
+                    <p-select
+                        [(ngModel)]="tipoSeleccionadoStock"
+                        [options]="tiposInventario"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Selecciona un tipo" />
+                </div>
+
+                <div class="rep-stock-info">
+                    <i class="pi pi-info-circle"></i>
+                    <span>El reporte incluirá todos los materiales activos del tipo seleccionado con su stock actual y alertas de mínimo.</span>
+                </div>
+            </div>
+
+            <div class="rep-card__footer">
+                <p-button
+                    label="Generar Reporte"
+                    icon="pi pi-file-pdf"
+                    severity="success"
+                    [loading]="generando"
+                    [disabled]="!puedeGenerarStock"
+                    (onClick)="generarStockActual()" />
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- visor PDF -->
+<p-dialog
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [style]="{ width: '90vw', height: '90vh' }"
+    [draggable]="false"
+    [resizable]="false"
+    (onHide)="cerrarDialog()">
+
+    <ng-template #header>
+        <div class="rep-dialog-header">
+            <i class="pi pi-file-pdf" style="color: var(--red-500)"></i>
+            <span>{{ tituloReporte }}</span>
+        </div>
+    </ng-template>
+
+    <div class="rep-visor">
+        <iframe
+            *ngIf="pdfUrl"
+            [src]="pdfUrl | safeUrl"
+            class="rep-iframe"
+            frameborder="0">
+        </iframe>
+    </div>
+
+    <ng-template #footer>
+        <div class="rep-dialog-footer">
+            <p-button
+                label="Cerrar"
+                severity="secondary"
+                [outlined]="true"
+                (onClick)="cerrarDialog()" />
+            <p-button
+                label="Descargar PDF"
+                icon="pi pi-download"
+                severity="danger"
+                (onClick)="descargarPdf()" />
+        </div>
+    </ng-template>
+
+</p-dialog>
