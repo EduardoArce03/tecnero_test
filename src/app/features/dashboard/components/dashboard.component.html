@@ -1,0 +1,129 @@
+<div class="dash-container">
+
+    <!-- bienvenida -->
+    <div class="dash-welcome">
+        <div class="dash-welcome__text">
+            <h2>{{ getGreeting() }}, {{ usuario?.nombre }} 👋</h2>
+            <span>Aquí tienes un resumen del sistema de inventarios</span>
+        </div>
+    </div>
+
+    <!-- skeleton mientras carga -->
+    <ng-container *ngIf="loading">
+        <div class="dash-stats">
+            <div class="dash-stat-card" *ngFor="let i of [1,2,3,4,5,6]">
+                <p-skeleton height="80px" borderRadius="12px" />
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- contenido -->
+    <ng-container *ngIf="!loading && data">
+
+        <!-- stat cards -->
+        <div class="dash-stats">
+
+            <div class="dash-stat-card dash-stat-card--warn">
+                <div class="dash-stat-card__icon">
+                    <i class="pi pi-clock"></i>
+                </div>
+                <div class="dash-stat-card__info">
+                    <span class="dash-stat-card__value">{{ data.solicitudesPendientes }}</span>
+                    <span class="dash-stat-card__label">Pendientes</span>
+                </div>
+            </div>
+
+            <div class="dash-stat-card dash-stat-card--success">
+                <div class="dash-stat-card__icon">
+                    <i class="pi pi-check-circle"></i>
+                </div>
+                <div class="dash-stat-card__info">
+                    <span class="dash-stat-card__value">{{ data.solicitudesAprobadas }}</span>
+                    <span class="dash-stat-card__label">Aprobadas</span>
+                </div>
+            </div>
+
+            <div class="dash-stat-card dash-stat-card--info">
+                <div class="dash-stat-card__icon">
+                    <i class="pi pi-box"></i>
+                </div>
+                <div class="dash-stat-card__info">
+                    <span class="dash-stat-card__value">{{ data.solicitudesEntregadas }}</span>
+                    <span class="dash-stat-card__label">Entregadas</span>
+                </div>
+            </div>
+
+            <div class="dash-stat-card dash-stat-card--danger">
+                <div class="dash-stat-card__icon">
+                    <i class="pi pi-times-circle"></i>
+                </div>
+                <div class="dash-stat-card__info">
+                    <span class="dash-stat-card__value">{{ data.solicitudesRechazadas }}</span>
+                    <span class="dash-stat-card__label">Rechazadas</span>
+                </div>
+            </div>
+
+            <div class="dash-stat-card dash-stat-card--primary">
+                <div class="dash-stat-card__icon">
+                    <i class="pi pi-tags"></i>
+                </div>
+                <div class="dash-stat-card__info">
+                    <span class="dash-stat-card__value">{{ data.totalMateriales }}</span>
+                    <span class="dash-stat-card__label">Materiales</span>
+                </div>
+            </div>
+
+            <div class="dash-stat-card" [class.dash-stat-card--danger]="data.materialesBajoStock > 0" [class.dash-stat-card--success]="data.materialesBajoStock === 0">
+                <div class="dash-stat-card__icon">
+                    <i class="pi pi-exclamation-triangle"></i>
+                </div>
+                <div class="dash-stat-card__info">
+                    <span class="dash-stat-card__value">{{ data.materialesBajoStock }}</span>
+                    <span class="dash-stat-card__label">Bajo Stock</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- actividad reciente -->
+        <div class="dash-section">
+            <div class="dash-section__header">
+                <h3>Actividad Reciente</h3>
+                <span>Últimas 5 solicitudes registradas</span>
+            </div>
+
+            <p-table [value]="data.ultimasSolicitudes" [tableStyle]="{ 'min-width': '100%' }">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>#</th>
+                        <th>Solicitante</th>
+                        <th>Línea</th>
+                        <th class="dash-col-center">Estado</th>
+                        <th>Fecha</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-s>
+                    <tr>
+                        <td class="dash-id">#{{ s.idSolicitud }}</td>
+                        <td class="dash-nombre">{{ s.solicitante }}</td>
+                        <td class="dash-secondary">{{ s.lineaProduccion }}</td>
+                        <td class="dash-col-center">
+                            <p-tag
+                                [value]="s.estado"
+                                [severity]="getSeverity(s.estado)"
+                                [rounded]="true" />
+                        </td>
+                        <td class="dash-secondary">{{ s.fechaSolicitud | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5" class="dash-empty">Sin actividad reciente</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+    </ng-container>
+
+</div>
