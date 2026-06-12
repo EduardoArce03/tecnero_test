@@ -163,12 +163,12 @@ export class MaterialesComponent implements OnInit {
     abrirDrawerEditar(material: MaterialResponse) {
         this.editando = true;
         this.uuidEditando = material.uuid;
-        this.lineasSeleccionadas = [];
+        this.lineasSeleccionadas = material.lineas?.map((l) => l.uuid) ?? [];
         this.form.patchValue({
             codigo: material.codigo,
             nombre: material.nombre,
             descripcion: material.descripcion,
-            unidadMedidaId: material.unidadMedida,
+            unidadMedidaId: material.unidadMedida.uuid,
             categoria: material.categoria,
             cantidadMinima: material.cantidadMinimaStock
         });
@@ -219,11 +219,10 @@ export class MaterialesComponent implements OnInit {
     }
 
     toggleLineaSeleccionada(uuid: string) {
-        const idx = this.lineasSeleccionadas.indexOf(uuid);
-        if (idx > -1) {
-            this.lineasSeleccionadas.splice(idx, 1);
+        if (this.lineasSeleccionadas.includes(uuid)) {
+            this.lineasSeleccionadas = this.lineasSeleccionadas.filter((id) => id !== uuid);
         } else {
-            this.lineasSeleccionadas.push(uuid);
+            this.lineasSeleccionadas = [...this.lineasSeleccionadas, uuid];
         }
     }
 

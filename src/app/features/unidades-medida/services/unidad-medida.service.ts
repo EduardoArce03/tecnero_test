@@ -21,6 +21,6 @@ export class UnidadMedidaService {
     }
 
     toggleActivo(id: number | string): Observable<UnidadMedidaResponse> {
-        return this.http.patch<UnidadMedidaResponse>(`${this.apiUrl}/api/unidades-medida/${id}/toggle-activo`, {});
+        return this.http.patch<UnidadMedidaResponse>(`${this.apiUrl}/api/unidades-medida/${id}/toggle`, {});
     }
 }

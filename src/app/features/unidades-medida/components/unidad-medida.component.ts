@@ -91,25 +91,25 @@ export class UnidadMedidaComponent implements OnInit {
     }
 
     toggleActivo(um: UnidadMedidaResponse): void {
-        // this.unidadMedidaService.toggleActivo(um.id).subscribe({
-        //     next: (response) => {
-        //         const idx = this.unidadesMedida.findIndex((u) => u.id === um.id);
-        //         if (idx !== -1) {
-        //             this.unidadesMedida = [...this.unidadesMedida.slice(0, idx), response, ...this.unidadesMedida.slice(idx + 1)];
-        //         }
-        //         this.messageService.add({
-        //             severity: response.activo ? 'success' : 'warn',
-        //             summary: response.activo ? 'Activada' : 'Desactivada',
-        //             detail: `"${response.nombre}" ${response.activo ? 'está activa' : 'fue desactivada'}.`
-        //         });
-        //     },
-        //     error: () => {
-        //         this.messageService.add({
-        //             severity: 'error',
-        //             summary: 'Error',
-        //             detail: 'No se pudo cambiar el estado.'
-        //         });
-        //     }
-        // });
+        this.unidadMedidaService.toggleActivo(um.uuid).subscribe({
+            next: (response) => {
+                const idx = this.unidadesMedida.findIndex((u) => u.uuid === um.uuid);
+                if (idx !== -1) {
+                    this.unidadesMedida = [...this.unidadesMedida.slice(0, idx), response, ...this.unidadesMedida.slice(idx + 1)];
+                }
+                this.messageService.add({
+                    severity: response.activo ? 'success' : 'warn',
+                    summary: response.activo ? 'Activada' : 'Desactivada',
+                    detail: `"${response.nombre}" ${response.activo ? 'está activa' : 'fue desactivada'}.`
+                });
+            },
+            error: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'No se pudo cambiar el estado.'
+                });
+            }
+        });
     }
 }

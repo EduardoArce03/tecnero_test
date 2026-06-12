@@ -15,7 +15,7 @@ export class LineaProduccionService {
     }
 
     crear(request: LineaProduccionRequest): Observable<LineaProduccion> {
-        return this.http.post<LineaProduccion>(this.url, request);
+        return this.http.post<LineaProduccion>(`${this.url}/crear`, request);
     }
 
     actualizar(uuid: string, request: LineaProduccionRequest): Observable<LineaProduccion> {

@@ -1,5 +1,6 @@
 import { UnidadMedidaResponse } from '@/app/features/unidades-medida/models/unidad-medida.response';
 import { TipoInventario } from '@/app/features/materiales/models/material.request';
+import { LineaProduccionResponse } from '@/app/features/lineas-produccion/models/linea-produccion.response';
 
 export interface MaterialResponse {
     uuid: string;
@@ -13,4 +14,5 @@ export interface MaterialResponse {
     cantidadActualStock: number;
     isBajoStock: boolean;
     tipoInventario: TipoInventario;
+    lineas: LineaProduccionResponse[];
 }
