@@ -33,14 +33,17 @@ export default [
     { path: 'linea-produccion', component: LineasProduccionComponent },
     { path: 'materiales', component: MaterialesComponent },
     { path: 'unidades-medida', component: UnidadMedidaComponent },
-    { path: 'reportes', children: [
-        {
-            path: 'kardex',
-            component: ReportesComponent,
-            canActivate: [roleGuard],
-            data: { roles: ['COORDINADOR', 'BODEGUERO'] }
-        }
-        ] },
+    {
+        path: 'reportes',
+        children: [
+            {
+                path: 'kardex',
+                component: ReportesComponent,
+                canActivate: [roleGuard],
+                data: { roles: ['COORDINADOR', 'BODEGUERO'] }
+            }
+        ]
+    },
     {
         path: 'solicitudes',
         children: [
@@ -48,13 +51,13 @@ export default [
                 path: 'crear',
                 component: CrearSolicitudComponent,
                 canActivate: [roleGuard],
-                data: { roles: ['COORDINADOR'] }
+                data: { roles: ['COORDINADOR', 'DEFAULT'] }
             },
             {
                 path: 'mis-solicitudes',
                 component: MisSolicitudesComponent,
                 canActivate: [roleGuard],
-                data: { roles: ['COORDINADOR'] }
+                data: { roles: ['COORDINADOR', 'DEFAULT'] }
             },
             {
                 path: 'aprobar',
@@ -67,7 +70,7 @@ export default [
                 component: DespacharSolicitudesComponent,
                 canActivate: [roleGuard],
                 data: { roles: ['BODEGUERO'] }
-            },
+            }
         ]
     },
     { path: '**', redirectTo: '/notfound' }

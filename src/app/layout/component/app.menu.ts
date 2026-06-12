@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
+import { AuthService } from '@/app/core/services/auth.service';
 
 @Component({
     selector: 'app-menu',
@@ -161,12 +162,21 @@ import { AppMenuitem } from './app.menuitem';
         </ul>
     `
 })
-export class AppMenu {
+export class AppMenu implements OnInit {
     model: MenuItem[] = [];
+    private authService = inject(AuthService);
 
     ngOnInit() {
-        this.model = [
-            {
+        const rol = this.authService.getRole();
+        this.model = this.buildMenu(rol);
+    }
+
+    private buildMenu(rol: string | null): MenuItem[] {
+        const items: MenuItem[] = [];
+
+        // configuración base — solo COORDINADOR y BODEGUERO
+        if (rol === 'COORDINADOR') {
+            items.push({
                 label: 'Configuración Base',
                 icon: 'pi pi-fw pi-cog',
                 items: [
@@ -181,49 +191,75 @@ export class AppMenu {
                         routerLink: '/pages/unidades-medida'
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        // bodega e inventario — COORDINADOR y BODEGUERO
+        if (rol === 'COORDINADOR' || rol === 'BODEGUERO') {
+            items.push({
                 label: 'Bodega e Inventario',
                 icon: 'pi pi-fw pi-box',
                 items: [
-                    {
-                        label: 'Catálogo de Materiales',
-                        icon: 'pi pi-fw pi-tags',
-                        routerLink: '/pages/materiales'
-                    },
+                    ...(rol === 'COORDINADOR'
+                        ? [
+                              {
+                                  label: 'Catálogo de Materiales',
+                                  icon: 'pi pi-fw pi-tags',
+                                  routerLink: '/pages/materiales'
+                              }
+                          ]
+                        : []),
                     {
                         label: 'Reportes',
                         icon: 'pi pi-fw pi-chart-line',
                         routerLink: '/pages/reportes/kardex'
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        // solicitudes — todos los roles pero con items distintos
+        const solicitudItems: MenuItem[] = [];
+
+        if (rol === 'DEFAULT' || rol === 'COORDINADOR') {
+            solicitudItems.push(
+                {
+                    label: 'Nueva Solicitud',
+                    icon: 'pi pi-fw pi-plus',
+                    routerLink: '/pages/solicitudes/crear'
+                },
+                {
+                    label: 'Mis Solicitudes',
+                    icon: 'pi pi-fw pi-folder',
+                    routerLink: '/pages/solicitudes/mis-solicitudes'
+                }
+            );
+        }
+
+        if (rol === 'COORDINADOR') {
+            solicitudItems.push({
+                label: 'Aprobar Solicitudes',
+                icon: 'pi pi-fw pi-check-circle',
+                routerLink: '/pages/solicitudes/aprobar'
+            });
+        }
+
+        if (rol === 'BODEGUERO') {
+            solicitudItems.push({
+                label: 'Despachar Materiales',
+                icon: 'pi pi-fw pi-send',
+                routerLink: '/pages/solicitudes/despachar'
+            });
+        }
+
+        if (solicitudItems.length > 0) {
+            items.push({
                 label: 'Gestión de Solicitudes',
                 icon: 'pi pi-fw pi-truck',
-                items: [
-                    {
-                        label: 'Nueva Solicitud',
-                        icon: 'pi pi-fw pi-plus',
-                        routerLink: '/pages/solicitudes/crear'
-                    },
-                    {
-                        label: 'Mis Solicitudes',
-                        icon: 'pi pi-fw pi-folder',
-                        routerLink: '/pages/solicitudes/mis-solicitudes'
-                    },
-                    {
-                        label: 'Aprobar (Coordinador)',
-                        icon: 'pi pi-fw pi-check-circle',
-                        routerLink: '/pages/solicitudes/aprobar'
-                    },
-                    {
-                        label: 'Despachar (Bodega)',
-                        icon: 'pi pi-fw pi-send',
-                        routerLink: '/pages/solicitudes/despachar'
-                    }
-                ]
-            }
-        ];
+                items: solicitudItems
+            });
+        }
+
+        return items;
     }
 }

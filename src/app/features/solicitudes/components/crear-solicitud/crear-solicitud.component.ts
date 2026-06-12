@@ -142,7 +142,7 @@ export class CrearSolicitudComponent implements OnInit {
             next: () => {
                 this.enviando = false;
                 this.toast('success', 'Solicitud enviada correctamente');
-                setTimeout(() => this.router.navigate(['/solicitudes/mis-solicitudes']), 1500);
+                setTimeout(() => this.router.navigate(['/pages/solicitudes/mis-solicitudes']), 1500);
             },
             error: () => {
                 this.enviando = false;
