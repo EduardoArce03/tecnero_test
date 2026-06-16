@@ -11,8 +11,8 @@ import { AuthService } from '@/app/core/services/auth.service';
 import { NotificacionResponse } from '@/app/features/notificaciones/models/notificacion.response';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
-import { interval, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { catchError, interval, of, Subscription } from 'rxjs';
+import { startWith, switchMap } from 'rxjs/operators';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { NotificacionService } from '@/app/features/notificaciones/services/notificaciones.service';
 import { NotifPanelComponent } from '@/app/features/core/notif-panel.component';
@@ -106,8 +106,8 @@ import { NotifPanelComponent } from '@/app/features/core/notif-panel.component';
             }
             .notif-count {
                 position: absolute;
-                top: 2px;
-                right: 2px;
+                top: 0px;
+                right: 0px;
                 min-width: 16px;
                 height: 16px;
                 border-radius: 8px;
@@ -257,10 +257,11 @@ import { NotifPanelComponent } from '@/app/features/core/notif-panel.component';
                 <div class="notif-btn">
                     <button class="ci-action-btn" (click)="toggleNotifPanel($event)" title="Notificaciones">
                         <i class="pi pi-bell"></i>
-                        <span class="notif-count" *ngIf="noLeidas > 0">
-                            {{ noLeidas > 99 ? '99+' : noLeidas }}
-                        </span>
                     </button>
+
+                    <span class="notif-count" *ngIf="noLeidas > 0">
+                        {{ noLeidas > 99 ? '99+' : noLeidas }}
+                    </span>
 
                     <p-popover #notifPanel styleClass="notif-panel-popover p-0">
                         <app-notif-panel [notificaciones]="notificaciones" [noLeidas]="noLeidas" (marcarLeida)="onMarcarLeida($event)" (marcarTodas)="onMarcarTodasLeidas()" (refresh)="cargarNotificaciones()" />
@@ -329,12 +330,24 @@ export class AppTopbar implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.cargarNotificaciones();
         this.pollSub = interval(30000)
-            .pipe(switchMap(() => this.notificacionService.contarNoLeidas()))
-            .subscribe((count) => {
+            .pipe(
+                startWith(0),
+                switchMap(() =>
+                    this.notificacionService.listarMisNotificaciones().pipe(
+                        catchError((error) => {
+                            console.error('Error cargando notificaciones en polling:', error);
+                            return of([]);
+                        })
+                    )
+                )
+            )
+            .subscribe((notifs) => {
                 this.ngZone.run(() => {
-                    this.noLeidas = count;
+                    this.notificaciones = [...notifs];
+                    this.noLeidas = notifs.filter((n) => !n.leida).length;
+
+                    this.cdr.markForCheck();
                     this.cdr.detectChanges();
                 });
             });
@@ -350,6 +363,8 @@ export class AppTopbar implements OnInit, OnDestroy {
                 this.ngZone.run(() => {
                     this.notificaciones = [...notifs];
                     this.noLeidas = notifs.filter((n) => !n.leida).length;
+                    console.log('noLeidas:', this.noLeidas);
+                    this.cdr.markForCheck();
                     this.cdr.detectChanges();
                 });
             },
