@@ -170,7 +170,8 @@ export class MaterialesComponent implements OnInit {
             descripcion: material.descripcion,
             unidadMedidaId: material.unidadMedida.uuid,
             categoria: material.categoria,
-            cantidadMinima: material.cantidadMinimaStock
+            cantidadMinima: material.cantidadMinimaStock,
+            tipoInventario: material.tipoInventario
         });
         this.drawerVisible = true;
     }

@@ -230,11 +230,11 @@ import { NotifPanelComponent } from '@/app/features/core/notif-panel.component';
                 </button>
                 <a class="topbar-brand" routerLink="/">
                     <div class="topbar-logo-box">
-                        <img src="assets/images/icono_compuinside.png" alt="CompuInside logo" />
+                        <img src="/demo/images/logo.ico" alt="xd" />
                     </div>
                     <div class="brand-text">
-                        <span class="brand-name">CompuInside</span>
-                        <span class="brand-product">MedInside</span>
+                        <span class="brand-name">Tecnero</span>
+                        <span class="brand-product">Corp. Novum</span>
                     </div>
                 </a>
             </div>
@@ -245,7 +245,9 @@ import { NotifPanelComponent } from '@/app/features/core/notif-panel.component';
                 </button>
 
                 <div class="relative">
-                    <button class="ci-action-btn layout-topbar-action-highlight" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
+                    <button class="ci-action-btn layout-topbar-action-highlight" pStyleClass="@next"
+                            enterFromClass="hidden" enterActiveClass="animate-scalein" leaveToClass="hidden"
+                            leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
                         <i class="pi pi-palette"></i>
                     </button>
                     <app-configurator />
@@ -264,13 +266,17 @@ import { NotifPanelComponent } from '@/app/features/core/notif-panel.component';
                     </span>
 
                     <p-popover #notifPanel styleClass="notif-panel-popover p-0">
-                        <app-notif-panel [notificaciones]="notificaciones" [noLeidas]="noLeidas" (marcarLeida)="onMarcarLeida($event)" (marcarTodas)="onMarcarTodasLeidas()" (refresh)="cargarNotificaciones()" />
+                        <app-notif-panel [notificaciones]="notificaciones" [noLeidas]="noLeidas"
+                                         (marcarLeida)="onMarcarLeida($event)" (marcarTodas)="onMarcarTodasLeidas()"
+                                         (refresh)="cargarNotificaciones()" />
                     </p-popover>
                 </div>
 
                 <!-- User profile -->
                 <div class="relative">
-                    <button class="user-profile-btn" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
+                    <button class="user-profile-btn" pStyleClass="@next" enterFromClass="hidden"
+                            enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout"
+                            [hideOnOutsideClick]="true">
                         <p-avatar
                             [label]="getInitials()"
                             shape="circle"
@@ -287,7 +293,8 @@ import { NotifPanelComponent } from '@/app/features/core/notif-panel.component';
                             <span class="user-name">{{ usuario?.nombre }} {{ usuario?.apellido }}</span>
                             <span class="user-role">{{ usuario?.role }}</span>
                         </div>
-                        <i class="pi pi-angle-down chevron-icon" style="font-size: 0.72rem; color: var(--text-color-secondary);"></i>
+                        <i class="pi pi-angle-down chevron-icon"
+                           style="font-size: 0.72rem; color: var(--text-color-secondary);"></i>
                     </button>
 
                     <div class="user-dropdown hidden">
