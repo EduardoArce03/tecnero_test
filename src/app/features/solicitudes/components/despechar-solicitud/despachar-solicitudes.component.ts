@@ -87,10 +87,6 @@ export class DespacharSolicitudesComponent implements OnInit {
                 this.solicitudes = this.solicitudes.filter((s) => s.idSolicitud !== solicitud.idSolicitud);
                 this.dialogDetalleVisible = false;
                 this.toast('success', `Solicitud #${solicitud.idSolicitud} entregada`);
-            },
-            error: () => {
-                this.procesando = false;
-                this.toast('error', 'Error al registrar la entrega');
             }
         });
     }

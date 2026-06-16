@@ -12,11 +12,18 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             const body = typeof error.error === 'string' ? JSON.parse(error.error) : error.error;
 
             if (body?.title && body?.message) {
-                const { title, message, severity } = body;
+                const severityMap: Record<string, string> = {
+                    error: 'error',
+                    warning: 'warn',
+                    info: 'info'
+                };
+
+                const rawSeverity = (body.severity ?? 'error').toLowerCase();
+
                 messageService.add({
-                    severity: (severity ?? 'error').toLowerCase(),
-                    summary: title,
-                    detail: message,
+                    severity: severityMap[rawSeverity] ?? 'error',
+                    summary: body.title,
+                    detail: body.message,
                     life: 9000
                 });
             } else {
