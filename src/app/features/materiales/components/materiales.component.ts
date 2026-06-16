@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { afterNextRender, ChangeDetectorRef, Component, inject, NgZone, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MaterialesService } from '@/app/features/materiales/services/materiales.service';
@@ -25,6 +25,7 @@ import { UnidadMedidaResponse } from '@/app/features/unidades-medida/models/unid
 import { UnidadMedidaService } from '@/app/features/unidades-medida/services/unidad-medida.service';
 import { StockUpdateRequest } from '@/app/features/materiales/models/stock-update.request';
 import { Dialog } from 'primeng/dialog';
+import { AuthService } from '@/app/core/services/auth.service';
 
 
 @Component({
@@ -56,6 +57,7 @@ export class MaterialesComponent implements OnInit {
     materiales: MaterialResponse[] = [];
     lineas: LineaProduccion[] = [];
     unidadesMedida: UnidadMedidaResponse[] = [];
+    authService = inject(AuthService);
 
     loading = false;
     guardando = false;
@@ -70,6 +72,7 @@ export class MaterialesComponent implements OnInit {
     materialParaStock: MaterialResponse | null = null;
     formStock: FormGroup;
     guardandoStock = false;
+    rol: string = '';
 
     protected tiposInventario = [
         { label: 'Producción', value: 'PRODUCCION' },
@@ -121,6 +124,7 @@ export class MaterialesComponent implements OnInit {
         //this.cargarMateriales();
         this.cargarLineas();
         this.cargarUnidadesMedida();
+        this.rol = this.authService.getRole() || '';
     }
 
     cargarMateriales() {
@@ -185,8 +189,6 @@ export class MaterialesComponent implements OnInit {
     guardar() {
         if (this.form.invalid) return;
         this.guardando = true;
-
-        console.log('akio' + this.lineasSeleccionadas);
 
         const request: MaterialRequest = {
             ...this.form.value,

@@ -7,10 +7,13 @@
             <h2>Materiales</h2>
             <span>Gestión de materiales e insumos de bodega</span>
         </div>
-        <p-button
-            label="Nuevo Material"
-            icon="pi pi-plus"
-            (onClick)="abrirDrawerCrear()" />
+        @if (rol === 'COORDINADOR') {
+            <p-button
+                label="Nuevo Material"
+                icon="pi pi-plus"
+                (onClick)="abrirDrawerCrear()" />
+        }
+
     </div>
 
     <p-table
@@ -84,22 +87,26 @@
                             pTooltip="Ajustar Stock"
                             tooltipPosition="top"
                             (onClick)="abrirDialogStock(material)" />
-                        <p-button
-                            icon="pi pi-pencil"
-                            [rounded]="true"
-                            [text]="true"
-                            severity="info"
-                            pTooltip="Editar"
-                            tooltipPosition="top"
-                            (onClick)="abrirDrawerEditar(material)" />
-                        <p-button
-                            [icon]="material.activo ? 'pi pi-ban' : 'pi pi-check-circle'"
-                            [rounded]="true"
-                            [text]="true"
-                            [severity]="material.activo ? 'danger' : 'success'"
-                            [pTooltip]="material.activo ? 'Desactivar' : 'Activar'"
-                            tooltipPosition="top"
-                            (onClick)="toggleActivo(material)" />
+                        @if (rol === 'COORDINADOR') {
+                            <p-button
+                                icon="pi pi-pencil"
+                                [rounded]="true"
+                                [text]="true"
+                                severity="info"
+                                pTooltip="Editar"
+                                tooltipPosition="top"
+                                (onClick)="abrirDrawerEditar(material)" />
+                        }
+                        @if (rol === 'COORDINADOR') {
+                            <p-button
+                                [icon]="material.activo ? 'pi pi-ban' : 'pi pi-check-circle'"
+                                [rounded]="true"
+                                [text]="true"
+                                [severity]="material.activo ? 'danger' : 'success'"
+                                [pTooltip]="material.activo ? 'Desactivar' : 'Activar'"
+                                tooltipPosition="top"
+                                (onClick)="toggleActivo(material)" />
+                        }
                     </div>
                 </td>
             </tr>

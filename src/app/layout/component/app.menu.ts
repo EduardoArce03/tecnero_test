@@ -200,15 +200,16 @@ export class AppMenu implements OnInit {
                 label: 'Bodega e Inventario',
                 icon: 'pi pi-fw pi-box',
                 items: [
-                    ...(rol === 'COORDINADOR'
-                        ? [
+                    // ...(rol === 'COORDINADOR'
+                    //     ? [
                               {
                                   label: 'Catálogo de Materiales',
                                   icon: 'pi pi-fw pi-tags',
                                   routerLink: '/pages/materiales'
                               }
-                          ]
-                        : []),
+                          // ]
+                        // : [])
+                    ,
                     {
                         label: 'Reportes',
                         icon: 'pi pi-fw pi-chart-line',
