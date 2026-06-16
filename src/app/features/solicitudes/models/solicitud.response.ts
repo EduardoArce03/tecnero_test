@@ -11,6 +11,7 @@ export interface SolicitudMaterialResponse {
     fechaAprobacion: string;
     aprobadoPor: UsuarioResponse | null;
     detalles: DetalleSolicitudResponse[];
+    fechaSolicitud: string;
 }
 
 export interface DetalleSolicitudResponse {
