@@ -106,7 +106,7 @@
 
     &--grow {
         flex: 1;
-        min-width: 0;
+        min-width: 160px; // evita que se aplaste demasiado
     }
 
     &--sm {
@@ -124,16 +124,10 @@
 }
 
 .cs-detalle-form {
-    display: grid;
-    grid-template-columns: 1fr 120px 1fr auto;
-    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
     gap: 0.75rem;
-
-    @media (max-width: 768px) {
-        grid-template-columns: 1fr 1fr;
-    }
 }
-
 // opciones del select material
 .cs-mat-option {
     display: flex;
